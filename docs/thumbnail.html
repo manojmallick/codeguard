@@ -1,0 +1,43 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0b141c;--surface:#182028;--border:#2a3640;--t0:#eef3fa;--t1:#9fb0c0;--t2:#6c7c90;
+    --accent:#fc6d26;--info:#4285F4;--success:#6bde80;--purple:#8E75FF}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{width:1200px;height:800px;background:radial-gradient(900px 520px at 78% -12%,#14293b,var(--bg));
+    color:var(--t0);font-family:Inter,sans-serif;padding:64px 70px;position:relative;overflow:hidden}
+  body::after{content:"";position:absolute;left:0;right:0;bottom:0;height:8px;background:linear-gradient(90deg,var(--accent),var(--purple),var(--info))}
+  .kic{font:700 17px JetBrains Mono,monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
+  .brand{display:flex;align-items:center;gap:18px;margin:22px 0 6px}
+  .brand .logo{font-size:74px}
+  .brand h1{font-size:88px;font-weight:900;letter-spacing:-.03em;line-height:1}
+  .tag{font-size:30px;color:var(--t1);line-height:1.35;margin-top:18px;max-width:980px}
+  .tag b{color:var(--t0)}
+  .chips{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap}
+  .chip{font:700 19px JetBrains Mono,monospace;border:1px solid var(--border);border-radius:999px;padding:11px 20px;color:var(--t1)}
+  .chip.p{border-color:#5b48a8;color:#cdbcff}.chip.i{border-color:#2f4f86;color:#adc6ff}.chip.a{border-color:#7a4326;color:#ffb597}
+  .stats{position:absolute;left:70px;bottom:54px;display:flex;gap:54px}
+  .stats .n{font-size:46px;font-weight:900;letter-spacing:-.02em}
+  .stats .n.o{color:var(--accent)}.stats .n.g{color:var(--success)}.stats .n.b{color:var(--info)}
+  .stats .l{font:600 15px JetBrains Mono,monospace;color:var(--t2);margin-top:2px}
+  .url{position:absolute;right:70px;bottom:60px;text-align:right}
+  .url .h{font:700 16px JetBrains Mono,monospace;color:var(--t2)}
+  .url .v{font:700 18px JetBrains Mono,monospace;color:var(--accent);margin-top:4px}
+</style></head>
+<body>
+  <div class="kic">Google Cloud Rapid Agent Hackathon · GitLab</div>
+  <div class="brand"><span class="logo">🛡️</span><h1>CodeGuard</h1></div>
+  <div class="tag">Every GitLab merge request, checked for <b>DORA Article 9</b> compliance before
+    production — <b>Gemini 3 reasons, a human approves, and CodeGuard auto-fixes</b> the violation.</div>
+  <div class="chips">
+    <span class="chip p">Gemini 3</span><span class="chip i">Agent Builder</span>
+    <span class="chip a">GitLab MCP</span><span class="chip i">Cloud Run</span>
+    <span class="chip">Auto-remediation</span>
+  </div>
+  <div class="stats">
+    <div><div class="n o">~45s</div><div class="l">vs ~23 min</div></div>
+    <div><div class="n g">100%</div><div class="l">eval recall</div></div>
+    <div><div class="n b">human</div><div class="l">in the loop</div></div>
+  </div>
+  <div class="url"><div class="h">LIVE DEMO</div><div class="v">→ Judge Mode</div></div>
+</body></html>
