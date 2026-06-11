@@ -1,0 +1,161 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0b141c;--surface:#182028;--border:#2a3640;--t0:#eef3fa;--t1:#9fb0c0;--t2:#6c7c90;
+    --accent:#fc6d26;--info:#4285F4;--success:#6bde80;--warning:#f5a623;--danger:#ff6b6b;--purple:#8E75FF}
+  *{box-sizing:border-box;margin:0;padding:0}
+  @page{size:1280px 720px;margin:0}
+  html,body{background:var(--bg)}
+  body{font-family:Inter,sans-serif;color:var(--t0)}
+  .slide{width:1280px;height:720px;padding:70px 84px;page-break-after:always;position:relative;overflow:hidden;
+    background:radial-gradient(900px 500px at 80% -20%,#13283a,var(--bg))}
+  .slide::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6px;background:linear-gradient(90deg,var(--accent),var(--purple),var(--info))}
+  .kic{font:700 14px JetBrains Mono,monospace;letter-spacing:.18em;text-transform:uppercase;color:var(--accent)}
+  h1{font-size:62px;font-weight:900;letter-spacing:-.03em;line-height:1.02;margin:16px 0}
+  h2{font-size:42px;font-weight:800;letter-spacing:-.02em;margin:6px 0 22px}
+  p,li{font-size:23px;line-height:1.5;color:var(--t1)}
+  .big{font-size:30px;color:var(--t0)}
+  ul{margin:8px 0 0 4px;list-style:none}
+  li{margin:14px 0;padding-left:34px;position:relative}
+  li::before{content:"▸";position:absolute;left:0;color:var(--accent);font-weight:800}
+  b,strong{color:var(--t0);font-weight:700}
+  .pagenum{position:absolute;right:40px;bottom:22px;font:600 13px JetBrains Mono,monospace;color:var(--t2)}
+  .foot{position:absolute;left:84px;bottom:24px;font:600 13px JetBrains Mono,monospace;color:var(--t2)}
+  .row{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px}
+  .chip{font:600 16px JetBrains Mono,monospace;border:1px solid var(--border);border-radius:999px;padding:8px 16px;color:var(--t1)}
+  .chip.a{border-color:#7a4326;color:#ffb597}.chip.i{border-color:#2f4f86;color:#adc6ff}.chip.p{border-color:#5b48a8;color:#cdbcff}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:18px}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:22px 24px}
+  .card h3{font-size:22px;margin-bottom:8px;display:flex;gap:10px;align-items:center}
+  .card p{font-size:18px}
+  table{width:100%;border-collapse:collapse;margin-top:10px}
+  td,th{text-align:left;padding:11px 8px;border-bottom:1px solid var(--border);font-size:20px}
+  th{color:var(--t2);font:700 14px JetBrains Mono,monospace;text-transform:uppercase;letter-spacing:.05em}
+  td.ok{color:var(--success);font-weight:700}
+  pre{background:#0a121a;border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin-top:14px;
+    font:600 17px/1.5 JetBrains Mono,monospace;color:#b9c8d8;white-space:pre}
+  .center{display:flex;flex-direction:column;justify-content:center}
+  .stat{display:flex;gap:40px;margin-top:22px}
+  .stat .n{font-size:52px;font-weight:900;letter-spacing:-.02em}
+  .stat .n.g{color:var(--success)}.stat .n.o{color:var(--accent)}.stat .n.b{color:var(--info)}
+  .stat .l{font-size:16px;color:var(--t1);margin-top:2px}
+  .quote{font-size:30px;font-weight:700;color:var(--t0);border-left:4px solid var(--accent);padding-left:22px;margin-top:24px}
+</style></head>
+<body>
+
+<!-- 1 cover -->
+<section class="slide center">
+  <div class="kic">Google Cloud Rapid Agent Hackathon · GitLab bucket</div>
+  <h1>🛡️ CodeGuard</h1>
+  <p class="big">DORA Article 9 merge-request review agent — Gemini 3 reasoning,<br>human-gated GitLab writes, auto-remediation, and a blocking CI gate.</p>
+  <div class="row"><span class="chip p">Gemini 3</span><span class="chip i">Agent Builder</span><span class="chip a">GitLab MCP</span><span class="chip i">Cloud Run</span></div>
+  <div class="foot">codeguard-908307939543.europe-west1.run.app</div>
+</section>
+
+<!-- 2 problem -->
+<section class="slide">
+  <div class="kic">The Problem</div>
+  <h2>DORA Art.9 review is manual, late & inconsistent</h2>
+  <p>Every change to a financial system must protect ICT — <b>encryption, logging, authorization, audit trails, safe errors.</b> Today:</p>
+  <ul>
+    <li><b>~23 minutes</b> of a senior engineer per merge request</li>
+    <li>Happens <b>after</b> the code is written — or not at all</li>
+    <li>One unencrypted card field = a <b>regulatory breach</b></li>
+  </ul>
+  <div class="foot">DORA in force · Jan 2025</div><div class="pagenum">02</div>
+</section>
+
+<!-- 3 solution -->
+<section class="slide center">
+  <div class="kic">The Solution</div>
+  <h2>Every MR, checked before production — with a human in control</h2>
+  <p class="big">CodeGuard <b>reasons</b> over the diff with Gemini 3, <b>proves</b> its fixes, <b>acts</b> through GitLab (gated), and <b>opens the remediation MR</b> itself.</p>
+  <div class="stat">
+    <div><div class="n o">~45s</div><div class="l">vs ~23 min manual</div></div>
+    <div><div class="n g">31×</div><div class="l">faster</div></div>
+    <div><div class="n b">100%</div><div class="l">eval recall</div></div>
+  </div>
+  <div class="pagenum">03</div>
+</section>
+
+<!-- 4 how -->
+<section class="slide">
+  <div class="kic">How it works</div>
+  <h2>Two agents, a 5-step mission</h2>
+  <pre>Browser / CI / Webhook ─► CodeGuard (Cloud Run)
+   1 read MR + diffs        → GitLab (MCP / REST)     GitLabReader
+   2 pre-scan rules         → checks.js               DORAAuditor
+   3 reason + confirm       → Gemini 3                DORAAuditor
+   4 decide pass / warn / block
+   5 fix-verify (re-scan)
+        │  ── human approves ▼ ──
+   execute   → comment · label · block · training issue · ledger
+   remediate → fix branch + remediation MR</pre>
+  <div class="pagenum">04</div>
+</section>
+
+<!-- 5 differentiators -->
+<section class="slide">
+  <div class="kic">Why it wins</div>
+  <h2>More than an AI linter</h2>
+  <div class="grid2">
+    <div class="card"><h3>🔧 Auto-remediation</h3><p>Detects <i>and</i> fixes — opens a real MR with verified changes.</p></div>
+    <div class="card"><h3>🔁 Blocking CI gate</h3><p>Non-compliant code can't merge; the pipeline turns red automatically.</p></div>
+    <div class="card"><h3>✅ Fix-verification</h3><p>Never claims a fix it can't prove — re-scanned clean by the rule engine.</p></div>
+    <div class="card"><h3>🔐 Evidence + 📒 Ledger</h3><p>SHA-256 audit artifact per scan; obligations exportable to CSV.</p></div>
+  </div>
+  <div class="foot">+ human-in-the-loop on every consequential write</div><div class="pagenum">05</div>
+</section>
+
+<!-- 6 stack -->
+<section class="slide">
+  <div class="kic">Built on the required stack</div>
+  <h2>Every box checked — and then some</h2>
+  <table>
+    <tr><th>Requirement</th><th>CodeGuard</th></tr>
+    <tr><td>Gemini 3</td><td class="ok">gemini-3-flash-preview (AI Studio / Vertex)</td></tr>
+    <tr><td>Google Cloud Agent Builder</td><td class="ok">agent.json — GitLab MCP + humanInTheLoop</td></tr>
+    <tr><td>GitLab via MCP</td><td class="ok">judged agent (MCP) + REST mirror</td></tr>
+    <tr><td>Cloud Run</td><td class="ok">deployed · public · europe-west1</td></tr>
+    <tr><td>Reproducible eval</td><td class="ok">100% recall / 100% fix-verification</td></tr>
+  </table>
+  <div class="pagenum">06</div>
+</section>
+
+<!-- 7 proof -->
+<section class="slide center">
+  <div class="kic">Proof it's real</div>
+  <h2>A live URL, not a slideshow</h2>
+  <ul>
+    <li><b>[TESTED: YES]</b> — real GitLab MR → BLOCK, 3 confirmed DORA/GDPR/NIS2 findings, ~8s</li>
+    <li>A <b>red CI pipeline</b> with CodeGuard's verdict in the build log</li>
+    <li>A real <b>auto-fix MR</b> opened by the agent</li>
+    <li>Click it yourself → <b>🎬 Judge Mode</b>, zero credentials</li>
+  </ul>
+  <div class="pagenum">07</div>
+</section>
+
+<!-- 8 market -->
+<section class="slide">
+  <div class="kic">Market & impact</div>
+  <h2>Fits the workflow developers already use</h2>
+  <ul>
+    <li><b>Who:</b> banks, insurers, fintechs & their ICT third parties — all in DORA scope</li>
+    <li><b>Where:</b> GitLab MR review + CI — zero new tools to learn</li>
+    <li><b>Value:</b> 23 min → 45 s, consistent enforcement, examiner-ready audit trail by default</li>
+    <li><b>Beyond DORA:</b> the same engine maps to NIS2, GDPR Art.32, PCI-DSS</li>
+  </ul>
+  <div class="pagenum">08</div>
+</section>
+
+<!-- 9 ask / close -->
+<section class="slide center">
+  <div class="kic">The Ask</div>
+  <h2>DORA Art.9 — from a 23-minute chore to a 45-second gate</h2>
+  <p class="big">Human-controlled, audit-ready, on every merge request — and it <b>fixes</b> what it finds.</p>
+  <div class="quote">"Compliance isn't a vibe — it's a hash." 🛡️</div>
+  <div class="foot">Try it → codeguard-908307939543.europe-west1.run.app · Judge Mode</div>
+  <div class="pagenum">09</div>
+</section>
+
+</body></html>

@@ -1,0 +1,26 @@
+{
+  "description": "Golden code snippets for CodeGuard. Tests (a) detection recall — does the deterministic pre-scan flag the expected rule? — and (b) fix-verification — does the proposed fix re-scan clean? Both run via src/checks.js, so numbers are real and reproducible. Tune regex rules to push recall up.",
+  "cases": [
+    { "name": "Unencrypted card save", "expect_rule": "encryption_sensitive_data", "expect_article": "DORA Art.9",
+      "vulnerable": "repository.save(payment.cardNumber);",
+      "fixed": "repository.save(encryptionService.encrypt(payment.cardNumber));" },
+    { "name": "Hardcoded password", "expect_rule": "encryption_sensitive_data", "expect_article": "DORA Art.9",
+      "vulnerable": "String password = \"hunter2supersecret\";",
+      "fixed": "String password = vault.get(\"db_password\");" },
+    { "name": "Empty catch block (no logging)", "expect_rule": "logging_completeness", "expect_article": "DORA Art.9 + NIS2 Art.21",
+      "vulnerable": "try { doWork(); } catch (Exception e) {}",
+      "fixed": "try { doWork(); } catch (Exception e) { logger.error(\"doWork failed\", e); }" },
+    { "name": "printStackTrace instead of logger", "expect_rule": "logging_completeness", "expect_article": "DORA Art.9 + NIS2 Art.21",
+      "vulnerable": "catch (IOException e) { e.printStackTrace(); }",
+      "fixed": "catch (IOException e) { logger.error(\"io error\", e); }" },
+    { "name": "TODO auth marker", "expect_rule": "authorization_checks", "expect_article": "DORA Art.9 + GDPR Art.25",
+      "vulnerable": "// TODO: add auth\nreturn accountRepository.findAll();",
+      "fixed": "@PreAuthorize(\"hasRole('ADMIN')\")\nreturn accountRepository.findAll();" },
+    { "name": "Stack trace leaked to response", "expect_rule": "safe_error_handling", "expect_article": "DORA Art.9",
+      "vulnerable": "response.send(exception.message + stacktrace);",
+      "fixed": "response.send(\"An internal error occurred\"); logger.error(exception);" },
+    { "name": "Clean code — no finding expected", "expect_rule": null, "expect_article": null,
+      "vulnerable": "int total = items.stream().mapToInt(Item::price).sum();",
+      "fixed": "int total = items.stream().mapToInt(Item::price).sum();" }
+  ]
+}

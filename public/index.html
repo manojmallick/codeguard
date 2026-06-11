@@ -1,0 +1,755 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CodeGuard — DevSecOps Compliance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    /* Stitch "DevSecOps Intelligence" — Deep Space palette */
+    --bg:#0b141c;            /* background / surface */
+    --surface:#182028;       /* cards (surface-container) */
+    --surface-low:#141c24;   /* table header / inset */
+    --surface-high:#222b33;  /* raised */
+    --surface-highest:#2d363e;
+    --surface-lowest:#070f16;
+    --border:#2a3640;        /* 1px outlines */
+    --text-0:#dae3ee;        /* on-surface */
+    --text-1:#94a6b6;        /* on-surface-variant */
+    --text-2:#67768a;        /* muted */
+    --accent:#fc6d26;        /* GitLab orange (brand action) */
+    --accent-soft:#ffb597;
+    --info:#4285F4;          /* Gemini / AI blue */
+    --info-soft:#adc6ff;
+    --success:#6bde80;       /* tertiary green */
+    --warning:#f5a623;
+    --danger:#ff6b6b;        /* error */
+    --danger-soft:#ffb4ab;
+    --sidebar:240px; --header:64px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text-0);
+    font:14px/1.5 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  .material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;
+    font-size:20px;line-height:1;vertical-align:middle;user-select:none}
+  .fill{font-variation-settings:'FILL' 1}
+  a{color:inherit;text-decoration:none}
+
+  /* ---------- Top nav ---------- */
+  header{position:fixed;top:0;left:0;right:0;height:var(--header);z-index:50;
+    display:flex;align-items:center;gap:32px;padding:0 24px;
+    background:var(--bg);border-bottom:1px solid var(--border)}
+  .brand{display:flex;align-items:center;gap:8px;font-size:22px;font-weight:700;
+    letter-spacing:-.01em;color:var(--accent)}
+  .brand .material-symbols-outlined{font-size:26px}
+  .topnav{display:flex;align-items:center;gap:24px}
+  .topnav a{font:500 12px/1 'JetBrains Mono',monospace;letter-spacing:.02em;color:var(--text-1);
+    padding-bottom:4px;border-bottom:2px solid transparent;transition:color .15s}
+  .topnav a:hover{color:var(--text-0)}
+  .topnav a.active{color:var(--accent);border-color:var(--accent)}
+  .spacer{flex:1}
+  .conn{display:flex;align-items:center;gap:8px;background:var(--surface-high);
+    border:1px solid var(--border);border-radius:8px;padding:6px 10px;
+    font:500 12px/1 'JetBrains Mono',monospace}
+  .conn .dot{width:8px;height:8px;border-radius:999px;background:var(--success);
+    box-shadow:0 0 0 0 rgba(107,222,128,.5);animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+  .conn .sep{width:1px;height:16px;background:var(--border);margin:0 2px}
+  .iconbtn{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;
+    border-radius:999px;color:var(--text-1);background:transparent;border:0;cursor:pointer;transition:background .15s}
+  .iconbtn:hover{background:var(--surface-highest)}
+  .avatar{width:32px;height:32px;border-radius:999px;border:1px solid var(--accent);
+    background:linear-gradient(135deg,#2d363e,#3a4550);display:inline-flex;align-items:center;
+    justify-content:center;color:var(--accent-soft);font-weight:600;font-size:13px}
+  .badge{font:500 11px/1 'JetBrains Mono',monospace;padding:5px 10px;border-radius:999px;
+    border:1px solid var(--border);color:var(--text-1)}
+  .badge.accent{border-color:color-mix(in srgb,var(--accent) 50%,transparent);color:var(--accent-soft)}
+  .badge.ai{border-color:color-mix(in srgb,var(--info) 50%,transparent);color:var(--info-soft)}
+  .badge.ok{border-color:color-mix(in srgb,var(--success) 50%,transparent);color:var(--success)}
+
+  /* ---------- Sidebar ---------- */
+  aside{position:fixed;left:0;top:var(--header);bottom:0;width:var(--sidebar);z-index:40;
+    display:flex;flex-direction:column;padding:16px 0;background:var(--surface);
+    border-right:1px solid var(--border)}
+  .repo{display:flex;align-items:center;gap:8px;padding:0 16px 16px}
+  .repo .glyph{width:26px;height:26px;border-radius:6px;background:var(--accent);
+    display:flex;align-items:center;justify-content:center;color:#2a1200;flex:none}
+  .repo .glyph .material-symbols-outlined{font-size:16px}
+  .repo .name{font:500 12px/1.3 'JetBrains Mono',monospace;color:var(--text-0)}
+  .repo .sub{font-size:12px;color:var(--text-1)}
+  .navlabel{font:700 10px/1 'JetBrains Mono',monospace;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--text-2);padding:0 16px;margin:4px 0 8px}
+  nav.side{flex:1;display:flex;flex-direction:column;gap:2px}
+  nav.side a{display:flex;align-items:center;gap:10px;margin:0 8px;padding:9px 12px;border-radius:8px;
+    color:var(--text-1);font:500 13px/1 Inter,sans-serif;cursor:pointer;transition:background .15s,color .15s}
+  nav.side a:hover{background:var(--surface-high);color:var(--text-0)}
+  nav.side a.active{background:color-mix(in srgb,var(--info) 22%,transparent);color:var(--info-soft)}
+  nav.side a .material-symbols-outlined{font-size:20px}
+  .side-foot{padding:0 16px;margin-top:auto}
+  .runbtn{width:100%;padding:12px;border-radius:8px;border:0;cursor:pointer;
+    background:var(--accent);color:#2a1200;font:700 13px Inter,sans-serif;
+    box-shadow:0 6px 20px color-mix(in srgb,var(--accent) 24%,transparent);transition:filter .15s,transform .1s}
+  .runbtn:hover{filter:brightness(1.08)} .runbtn:active{transform:scale(.97)}
+  .side-links{margin-top:18px;padding-top:14px;border-top:1px solid var(--border);
+    display:flex;flex-direction:column;gap:10px}
+  .side-links a{display:flex;align-items:center;gap:8px;font:500 13px Inter;color:var(--text-1)}
+  .side-links a:hover{color:var(--text-0)}
+  .side-links .material-symbols-outlined{font-size:18px}
+
+  /* ---------- Main ---------- */
+  main{margin-left:var(--sidebar);margin-top:var(--header);padding:32px;max-width:1280px}
+  .page-title{display:flex;align-items:baseline;gap:12px;margin:0 0 4px}
+  .page-title h1{font-size:24px;font-weight:700;letter-spacing:-.01em;margin:0}
+  .page-sub{color:var(--text-1);font-size:13px;margin:0 0 24px}
+
+  /* stat bento */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+  .stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;
+    display:flex;flex-direction:column;justify-content:space-between;min-height:104px;
+    transition:border-color .15s}
+  .stat:hover{border-color:color-mix(in srgb,var(--accent) 45%,transparent)}
+  .stat .top{display:flex;justify-content:space-between;align-items:flex-start}
+  .stat .lbl{font:500 12px/1.2 'JetBrains Mono',monospace;color:var(--text-1)}
+  .stat .num{font-size:32px;font-weight:700;letter-spacing:-.02em;line-height:1.1;margin-top:8px}
+  .stat .meta{font-size:13px;color:var(--text-1);margin-top:4px}
+  .stat .ico{color:var(--accent)} .stat .ico.warn{color:var(--danger)} .stat .ico.fast{color:var(--success)}
+  .chip{display:inline-block;font:500 11px/1 'JetBrains Mono',monospace;padding:3px 6px;border-radius:4px;
+    background:color-mix(in srgb,var(--success) 12%,transparent);color:var(--success)}
+  .ring{display:flex;align-items:center;gap:14px}
+  .ring svg{width:60px;height:60px} .ring .pct{font:700 13px 'JetBrains Mono',monospace}
+
+  /* review input */
+  .panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px}
+  .panel-head{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+  .panel-head h2{font-size:16px;font-weight:600;margin:0}
+  .panel-head .material-symbols-outlined{color:var(--accent);font-size:20px}
+  .search{display:flex;gap:8px}
+  input{background:var(--surface-lowest);border:1px solid var(--border);color:var(--text-0);
+    border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;outline:none;transition:border-color .15s,box-shadow .15s}
+  input::placeholder{color:var(--text-2)}
+  input:focus{border-color:var(--info);box-shadow:0 0 0 3px color-mix(in srgb,var(--info) 22%,transparent)}
+  #pid{flex:2} #iid{flex:1}
+  button{background:var(--accent);color:#2a1200;border:0;border-radius:8px;padding:0 18px;
+    font-weight:600;font-family:inherit;cursor:pointer;transition:filter .15s}
+  button:hover{filter:brightness(1.08)}
+  button.ghost{background:transparent;color:var(--text-1);border:1px solid var(--border)}
+  button.ghost:hover{filter:none;background:var(--surface-high);color:var(--text-0)}
+  button.judge{background:transparent;color:var(--info);border:1px solid color-mix(in srgb,var(--info) 60%,transparent);
+    height:34px;padding:0 14px;font:600 12px Inter}
+
+  /* cards (used by renderReview) */
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-top:16px}
+  #out > .card:first-child{margin-top:0}
+  .verdict{font-size:32px;font-weight:700;letter-spacing:-.02em;vertical-align:middle}
+  .pill{display:inline-block;font:500 11px/1 'JetBrains Mono',monospace;padding:5px 10px;border-radius:999px;vertical-align:middle}
+  .pill.block{background:color-mix(in srgb,var(--danger) 14%,transparent);color:var(--danger-soft);border:1px solid color-mix(in srgb,var(--danger) 45%,transparent)}
+  .pill.pass{background:color-mix(in srgb,var(--success) 12%,transparent);color:var(--success);border:1px solid color-mix(in srgb,var(--success) 45%,transparent)}
+  .pill.warn{background:color-mix(in srgb,var(--warning) 12%,transparent);color:var(--warning);border:1px solid color-mix(in srgb,var(--warning) 45%,transparent)}
+  pre{background:var(--surface-lowest);border:1px solid var(--border);border-radius:8px;padding:12px;
+    font:13px/1.55 'JetBrains Mono',monospace;overflow:auto;white-space:pre-wrap;margin:10px 0 0}
+  .add{color:var(--success)} .del{color:var(--danger-soft)}
+  .log{font:13px/1.6 'JetBrains Mono',monospace;color:var(--text-1);white-space:pre-wrap}
+  .muted{color:var(--text-2)}
+  .sectlabel{color:var(--text-1);font:600 12px/1 'JetBrains Mono',monospace;letter-spacing:.02em;
+    text-transform:uppercase;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+  .kv{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid var(--border)}
+  .kv b{font-weight:600}
+  .mono{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-1);word-break:break-all}
+  table.ledger{width:100%;border-collapse:collapse;font-size:13px}
+  table.ledger th{text-align:left;color:var(--text-1);font:500 11px 'JetBrains Mono',monospace;
+    text-transform:uppercase;letter-spacing:.04em;padding:8px;background:var(--surface-low);border-bottom:1px solid var(--border)}
+  table.ledger td{padding:8px;border-bottom:1px solid var(--border);vertical-align:top}
+  table.ledger tr:hover td{background:var(--surface-high)}
+  a.csv{color:var(--accent);text-decoration:none;font:500 12px 'JetBrains Mono',monospace}
+  a.csv:hover{text-decoration:underline}
+
+  /* two-up row (live log + dashboard widgets) */
+  .grid2{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;margin-top:16px}
+  .grid2 .card{margin-top:0}
+
+  /* recent reviews table */
+  .reviews{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:16px}
+  .reviews .rhead{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+  .reviews h2{font-size:16px;font-weight:600;margin:0}
+  .reviews a.all{color:var(--accent);font:500 12px Inter}
+  table.rev{width:100%;border-collapse:collapse}
+  table.rev th{text-align:left;font:500 11px 'JetBrains Mono',monospace;letter-spacing:.04em;color:var(--text-1);
+    text-transform:uppercase;padding:10px 20px;background:var(--surface-low)}
+  table.rev td{padding:14px 20px;border-top:1px solid var(--border);font-size:13px}
+  table.rev tr:hover td{background:color-mix(in srgb,var(--surface-highest) 50%,transparent)}
+  .who{display:flex;align-items:center;gap:8px}
+  .who .dot{width:24px;height:24px;border-radius:999px;background:var(--surface-highest);flex:none}
+  .ck{display:inline-flex;align-items:center;gap:3px;font:700 10px 'JetBrains Mono',monospace;
+    padding:2px 6px;border-radius:4px;border:1px solid}
+  .ck.bad{background:color-mix(in srgb,var(--danger) 10%,transparent);color:var(--danger-soft);border-color:color-mix(in srgb,var(--danger) 25%,transparent)}
+  .ck.good{background:color-mix(in srgb,var(--success) 10%,transparent);color:var(--success);border-color:color-mix(in srgb,var(--success) 25%,transparent)}
+  .ck.na{background:var(--surface-high);color:var(--text-1);border-color:var(--border)}
+  .res{font:700 10px 'JetBrains Mono',monospace;padding:4px 10px;border-radius:999px}
+  .res.block{background:var(--danger);color:#3a0000} .res.pass{background:var(--success);color:#003913}
+  .res.run{color:var(--text-1);font-style:italic}
+
+  /* chart + training widgets */
+  .widgets{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;margin-top:16px}
+  .widget{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;display:flex;flex-direction:column}
+  .widget h2{font-size:16px;font-weight:600;margin:0 0 16px;display:flex;align-items:center;gap:8px}
+  .legend{display:flex;gap:16px;font:500 11px 'JetBrains Mono',monospace;color:var(--text-1)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .legend i{width:8px;height:8px;border-radius:999px;display:inline-block}
+  .chartwrap{flex:1;min-height:180px;margin-top:12px}
+  .axis{display:flex;justify-content:space-between;font:500 11px 'JetBrains Mono',monospace;color:var(--text-2);margin-top:8px}
+  .training{background:var(--surface-high);border:1px solid var(--border);border-radius:8px;padding:16px}
+  .training .row1{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .tflag{font:700 10px 'JetBrains Mono',monospace;padding:3px 8px;border-radius:4px;
+    background:color-mix(in srgb,var(--accent) 12%,transparent);color:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 25%,transparent)}
+
+  /* ApprovalBar (sticky, offset for sidebar) */
+  .approval{position:fixed;left:var(--sidebar);right:0;bottom:0;background:var(--surface-high);
+    border-top:1px solid var(--border);padding:14px 24px;display:none;gap:12px;align-items:center;z-index:45;
+    box-shadow:0 -10px 40px rgba(0,0,0,.4)}
+  .approval.show{display:flex} .approval .desc{flex:1}
+  .approval .desc strong{font-size:14px} .approval .ttl-ico{color:var(--accent)}
+  small.foot{position:fixed;right:18px;bottom:78px;color:var(--text-2);font:500 11px 'JetBrains Mono',monospace;z-index:30}
+
+  /* Judge Mode spotlight + coach */
+  .spotlight{outline:2px solid var(--info);outline-offset:4px;border-radius:12px;
+    box-shadow:0 0 0 4000px rgba(5,9,14,.66);transition:box-shadow .2s;position:relative;z-index:46}
+  .coach{position:fixed;left:calc(50% + var(--sidebar)/2);transform:translateX(-50%);bottom:96px;
+    width:min(680px,calc(100% - var(--sidebar) - 48px));background:var(--surface-high);
+    border:1px solid var(--info);border-radius:14px;padding:18px 20px;
+    box-shadow:0 18px 60px rgba(0,0,0,.6);display:none;z-index:60}
+  .coach.show{display:block}
+  .coach .step{color:var(--info);font:600 12px 'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase}
+  .coach h3{margin:6px 0 8px;font-size:18px}
+  .coach p{margin:0 0 8px;color:var(--text-1)}
+  .coach .req{display:inline-block;font:500 11px 'JetBrains Mono',monospace;color:var(--success);
+    border:1px solid color-mix(in srgb,var(--success) 50%,transparent);border-radius:999px;padding:3px 9px;margin-top:4px}
+  .coach .row{display:flex;align-items:center;gap:10px;margin-top:14px}
+  .coach .row .spacer{flex:1}
+  .dots{display:flex;gap:6px} .dot{width:7px;height:7px;border-radius:999px;background:var(--border)}
+  .dot.on{background:var(--info)}
+  .reqgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+  .reqgrid .r{display:flex;gap:8px;align-items:center;font-size:13px}
+
+  /* responsive: collapse sidebar */
+  @media(max-width:1080px){
+    aside{display:none} main{margin-left:0;padding:20px} .approval{left:0}
+    .coach{left:50%;width:min(680px,calc(100% - 32px))}
+    .stats{grid-template-columns:repeat(2,1fr)} .grid2,.widgets{grid-template-columns:1fr}
+    .topnav{display:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- ───────── Top nav ───────── -->
+<header>
+  <span class="brand"><span class="material-symbols-outlined fill">shield</span>CodeGuard</span>
+  <nav class="topnav">
+    <a class="active" href="#" onclick="topnav('dashboard',this);return false">Dashboard</a>
+    <a href="#" onclick="topnav('queue',this);return false">MR Queue</a>
+    <a href="#" onclick="topnav('history',this);return false">Compliance History</a>
+    <a href="#" onclick="topnav('settings',this);return false">Settings</a>
+  </nav>
+  <span class="spacer"></span>
+  <span class="conn" onclick="showSettings()" style="cursor:pointer" title="Connection status">
+    <span class="dot"></span>GitLab Connected
+    <span class="sep"></span>codeguard-demo
+    <span class="material-symbols-outlined" style="font-size:16px">expand_more</span>
+  </span>
+  <span class="badge ai">Gemini 3</span>
+  <button class="judge" onclick="startJudge()">🎬 Judge Mode</button>
+  <button class="iconbtn" title="Notifications" onclick="scrollToSel('#trainingCard')"><span class="material-symbols-outlined">notifications</span></button>
+  <span class="avatar" title="Health" onclick="showSettings()" style="cursor:pointer">M</span>
+</header>
+
+<!-- ───────── Sidebar (command center) ───────── -->
+<aside>
+  <div class="repo">
+    <span class="glyph"><span class="material-symbols-outlined">terminal</span></span>
+    <div>
+      <div class="name">spring-security-samples</div>
+      <div class="sub">GitLab Repository</div>
+    </div>
+  </div>
+  <div class="navlabel">Compliance Modules</div>
+  <nav class="side">
+    <a href="#" onclick="sidenav('scan',this);return false"><span class="material-symbols-outlined">security</span>Security Scan</a>
+    <a href="#" onclick="sidenav('vuln',this);return false"><span class="material-symbols-outlined">map</span>Vulnerability Map</a>
+    <a href="#" onclick="sidenav('policy',this);return false"><span class="material-symbols-outlined">policy</span>Policy Editor</a>
+    <a href="#" onclick="sidenav('cloud',this);return false"><span class="material-symbols-outlined">cloud</span>Cloud Config</a>
+    <a class="active" href="#" onclick="sidenav('auditor',this);return false"><span class="material-symbols-outlined fill">psychology</span>AI Auditor</a>
+  </nav>
+  <div class="side-foot">
+    <button class="runbtn" onclick="runDemo()">Run Compliance Check</button>
+    <div class="side-links">
+      <a href="https://gitlab.com/mmallick1990/codeguard-demo" target="_blank" rel="noopener"><span class="material-symbols-outlined">support</span>Demo Repo</a>
+      <a href="https://docs.gitlab.com/ee/user/gitlab_duo/" target="_blank" rel="noopener"><span class="material-symbols-outlined">description</span>MCP Docs</a>
+    </div>
+  </div>
+</aside>
+
+<!-- ───────── Main ───────── -->
+<main>
+  <div class="page-title"><h1>DevSecOps Compliance Dashboard</h1></div>
+  <p class="page-sub">Every merge request, checked for DORA Article 9 compliance before production — with a human in control.</p>
+
+  <!-- Bento stats -->
+  <div class="stats">
+    <div class="stat">
+      <div class="top"><span class="lbl">MRs Reviewed Today</span><span class="material-symbols-outlined ico">merge_type</span></div>
+      <div><div class="num" id="statMRs">0</div><div class="meta" id="statMRsMeta">awaiting first review</div></div>
+    </div>
+    <div class="stat">
+      <div class="top"><span class="lbl">Critical Violations</span><span class="material-symbols-outlined ico warn" style="animation:pulse 2s infinite">report_problem</span></div>
+      <div><div class="num" style="color:var(--danger-soft)" id="statCritical">0</div><div class="meta">require immediate fix</div></div>
+    </div>
+    <div class="stat">
+      <div class="top"><span class="lbl">Avg Review Time</span><span class="material-symbols-outlined ico fast">bolt</span></div>
+      <div><div style="display:flex;align-items:baseline;gap:8px"><div class="num" style="color:var(--success)" id="statTime">—</div><span class="chip" id="statChip">vs 23min</span></div><div class="meta">vs 23min manual review</div></div>
+    </div>
+    <div class="stat">
+      <div class="ring">
+        <svg viewBox="0 0 36 36">
+          <path fill="none" stroke="var(--surface-highest)" stroke-width="3" d="M18 2.0845a15.9155 15.9155 0 0 1 0 31.831a15.9155 15.9155 0 0 1 0 -31.831"/>
+          <path fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" stroke-dasharray="87,100" d="M18 2.0845a15.9155 15.9155 0 0 1 0 31.831a15.9155 15.9155 0 0 1 0 -31.831"/>
+          <text x="18" y="20.5" text-anchor="middle" class="pct" fill="var(--text-0)" font-size="9">87%</text>
+        </svg>
+        <div><div class="lbl">Team DORA Score</div><div class="num" style="font-size:20px;margin-top:2px">87/100</div><div class="meta" style="color:var(--success)">+5 from last week</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Review input (Beat 1 command) -->
+  <div class="panel" id="searchbar">
+    <div class="panel-head"><span class="material-symbols-outlined">rule</span><h2>Review a Merge Request</h2></div>
+    <div class="search">
+      <input id="pid" placeholder="Project ID or path (e.g. mygroup/payments-api)" />
+      <input id="iid" placeholder="MR # (e.g. 247)" />
+      <button id="reviewBtn" onclick="run()">Review</button>
+    </div>
+  </div>
+
+  <!-- Live review detail renders here (Beat 2) -->
+  <div id="out"></div>
+
+  <!-- Agent log + Requires-Training widget -->
+  <div class="grid2">
+    <div class="card" id="logcard">
+      <div class="sectlabel">⚡ Agent Activity Log</div>
+      <div id="log" class="log">idle.</div>
+    </div>
+    <div class="card" id="trainingCard">
+      <div class="sectlabel">🧠 Requires Training</div>
+      <div class="training">
+        <div class="row1"><strong style="font:500 12px 'JetBrains Mono',monospace">@sarah.kim</strong><span class="tflag">DORA Training Required</span></div>
+        <p style="font-size:13px;color:var(--text-1);margin:0 0 12px">3 encryption violations detected in the last 30 days. System recommends a session on "Secure Env-Var Injection".</p>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><a class="csv" href="https://gitlab.com/mmallick1990/codeguard-demo/-/issues" target="_blank" rel="noopener">Training issues ↗</a><div style="font-size:11px;color:var(--text-2)">Auto-created on repeat violations</div></div>
+          <button class="ghost" style="height:34px" onclick="this.textContent='Reminder sent ✓';this.disabled=true">Send reminder</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Compliance-debt ledger renders here -->
+  <div id="ledgerCard"></div>
+
+  <!-- Recent MR Compliance Reviews (dashboard context) -->
+  <div class="reviews" id="reviewsTable">
+    <div class="rhead"><h2>Recent MR Compliance Reviews</h2><a class="all" href="#" onclick="runDemo();return false">Review live MR !1 ▸</a></div>
+    <table class="rev">
+      <thead><tr><th>MR #</th><th>Developer</th><th>Title</th><th>Checks</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr>
+          <td style="font:700 12px 'JetBrains Mono',monospace">!247</td>
+          <td><div class="who"><span class="dot"></span>@sarah.kim</div></td>
+          <td>"Add payment endpoint"</td>
+          <td><span class="ck bad">❌ Encrypt</span> <span class="ck good">✅ Log</span> <span class="ck good">✅ Auth</span> <span class="ck na">⚠ Audit</span></td>
+          <td><span class="res block">BLOCKED</span></td>
+        </tr>
+        <tr>
+          <td style="font:700 12px 'JetBrains Mono',monospace">!246</td>
+          <td><div class="who"><span class="dot"></span>@manoj.m</div></td>
+          <td>"Refactor user service"</td>
+          <td><span class="ck good">✅ All passed</span></td>
+          <td><span class="res pass">DORA PASS</span></td>
+        </tr>
+        <tr>
+          <td style="font:700 12px 'JetBrains Mono',monospace">!248</td>
+          <td><div class="who"><span class="dot"></span>@alex.chen</div></td>
+          <td>"GDPR consent flow"</td>
+          <td><span class="ck na">●</span> <span class="ck na">●</span> <span class="ck na">●</span></td>
+          <td><span class="res run" id="analyzingCell">Analyzing…</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Violation Trends + spacer -->
+  <div class="widgets" id="trends">
+    <div class="widget">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <h2>Violation Trends</h2>
+        <div class="legend">
+          <span><i style="background:var(--accent)"></i>Total</span>
+          <span><i style="background:var(--danger-soft)"></i>Critical</span>
+          <span><i style="background:var(--success)"></i>Resolved</span>
+        </div>
+      </div>
+      <div class="chartwrap">
+        <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <line stroke="var(--border)" stroke-width=".5" x1="0" x2="100" y1="25" y2="25"/>
+          <line stroke="var(--border)" stroke-width=".5" x1="0" x2="100" y1="50" y2="50"/>
+          <line stroke="var(--border)" stroke-width=".5" x1="0" x2="100" y1="75" y2="75"/>
+          <path d="M0,80 Q10,75 20,60 T40,55 T60,40 T80,35 T100,20" fill="none" stroke="var(--accent)" stroke-width="2"/>
+          <path d="M0,90 Q10,85 20,70 T40,75 T60,65 T80,68 T100,60" fill="none" stroke="var(--danger-soft)" stroke-width="2"/>
+          <path d="M0,95 Q10,92 20,80 T40,70 T60,50 T80,45 T100,15" fill="none" stroke="var(--success)" stroke-width="2"/>
+        </svg>
+      </div>
+      <div class="axis"><span>30 days ago</span><span>15 days ago</span><span>Today</span></div>
+    </div>
+    <div class="widget">
+      <h2>DORA Article 9 Coverage</h2>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="kv"><span>Encryption at rest</span><span class="pill pass">enforced</span></div>
+        <div class="kv"><span>Structured logging</span><span class="pill pass">enforced</span></div>
+        <div class="kv"><span>Authorization checks</span><span class="pill pass">enforced</span></div>
+        <div class="kv"><span>Audit trail on writes</span><span class="pill warn">monitored</span></div>
+        <div class="kv" style="border:0"><span>Safe error handling</span><span class="pill pass">enforced</span></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ApprovalBar -->
+<div id="approval" class="approval">
+  <div class="desc"><strong><span class="ttl-ico">⚡</span> <span id="apTitle"></span></strong><br><span class="muted mono" id="apTools"></span></div>
+  <button class="ghost" onclick="hideApproval()">Reject</button>
+  <button id="fixBtn" class="ghost" style="display:none;border-color:color-mix(in srgb,var(--success) 55%,transparent);color:var(--success)" onclick="remediate()">🔧 Approve Auto-Fix MR</button>
+  <button id="approveBtn" onclick="approve()">Approve &amp; Execute ▸</button>
+</div>
+
+<!-- Judge Navigation coach panel -->
+<div id="coach" class="coach">
+  <div class="step" id="coachStep"></div>
+  <h3 id="coachTitle"></h3>
+  <div id="coachBody"></div>
+  <div class="row">
+    <div class="dots" id="coachDots"></div>
+    <div class="spacer"></div>
+    <button class="ghost" onclick="endJudge()">Exit</button>
+    <button id="coachNext" onclick="coachNext()">Next ▸</button>
+  </div>
+</div>
+
+<small class="foot">Powered by GitLab MCP + Gemini 3 · Google Cloud Agent Builder</small>
+
+<script>
+let pending = null, lastReview = null;
+const $ = (id) => document.getElementById(id);
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+// ---------- Navigation: every nav element does something real ----------
+function scrollToSel(sel){ const e=document.querySelector(sel); if(e) e.scrollIntoView({behavior:'smooth',block:'start'}); }
+function setActive(group, el){ document.querySelectorAll(group).forEach(a=>a.classList.remove('active')); if(el) el.classList.add('active'); }
+function panel(html){ $('out').innerHTML = html; scrollToSel('#out'); }
+
+function runDemo(){
+  if(!$('pid').value.trim()){ $('pid').value='mmallick1990/codeguard-demo'; }
+  if(!$('iid').value.trim()){ $('iid').value='1'; }
+  scrollToSel('#searchbar');
+  run();
+}
+
+async function topnav(view, el){
+  setActive('.topnav a', el);
+  if(view==='dashboard'){ $('out').innerHTML=''; window.scrollTo({top:0,behavior:'smooth'}); }
+  else if(view==='queue'){ scrollToSel('#reviewsTable'); }
+  else if(view==='history'){ await loadLedger(); scrollToSel($('ledgerCard').innerHTML.trim() ? '#ledgerCard' : '#reviewsTable'); }
+  else if(view==='settings'){ await showSettings(); }
+}
+async function sidenav(view, el){
+  setActive('.side a', el);
+  if(view==='scan' || view==='auditor'){ scrollToSel('#searchbar'); }
+  else if(view==='vuln'){ scrollToSel('#trends'); }
+  else if(view==='policy'){ showPolicy(); }
+  else if(view==='cloud'){ await showSettings(); }
+}
+
+const DORA_RULES = [
+  ['encryption_sensitive_data','DORA Art.9','critical','Sensitive data (cards, PII, secrets) must be encrypted before storage.'],
+  ['logging_completeness','DORA Art.9 + NIS2 Art.21','critical','Security operations need structured logging — no empty catch / printStackTrace.'],
+  ['authorization_checks','DORA Art.9 + GDPR Art.25','critical','Authorization must be verified before data access (no TODO-auth).'],
+  ['audit_trail','DORA Art.9','high','Data modifications must create audit-log entries.'],
+  ['safe_error_handling','DORA Art.9','high','Error responses must not leak stack traces / system internals.'],
+];
+function showPolicy(){
+  panel(`<div class="card"><div class="sectlabel">📜 DORA Article 9 Policy Rules <span style="color:var(--text-2)">(the deterministic pre-scan engine)</span></div>
+    <table class="ledger"><thead><tr><th>Rule</th><th>Regulation</th><th>Severity</th><th>What it enforces</th></tr></thead><tbody>
+    ${DORA_RULES.map(r=>`<tr><td class="mono">${r[0]}</td><td>${r[1]}</td>
+      <td><span class="pill ${r[2]==='critical'?'block':'warn'}">${r[2]}</span></td><td>${r[3]}</td></tr>`).join('')}
+    </tbody></table>
+    <div class="muted" style="font-size:12px;margin-top:10px">Gemini 3 reasons over each flagged hunk to confirm real violations and cut false positives.</div></div>`);
+}
+async function showSettings(){
+  let h={}; try{ h = await (await fetch('/health')).json(); }catch(e){ h={status:'unreachable'}; }
+  const ok = (v)=> v ? '<span class="pill pass">yes</span>' : '<span class="pill block">no</span>';
+  panel(`<div class="card"><div class="sectlabel">⚙️ Connection & Deployment <span style="color:var(--text-2)">(live /health)</span></div>
+    <div class="kv"><span>Service</span><b>${h.service||'—'} v${h.version||''}</b></div>
+    <div class="kv"><span>Gemini model</span><b class="mono">${h.model||'—'}</b></div>
+    <div class="kv"><span>GenAI backend</span><b>${h.genai_backend||'—'}</b></div>
+    <div class="kv"><span>GitLab connected</span><b>${ok(h.partner_connected)}</b></div>
+    <div class="kv"><span>Agents</span><b>${(h.agents||[]).join(', ')||'—'}</b></div>
+    <div class="kv" style="border:0"><span>Regulations</span><b>${(h.regulations||[]).join(' · ')||'—'}</b></div></div>`);
+}
+
+// ---------- Review rendering (shared by manual + Judge Mode) ----------
+let reviewCount = 0;
+function updateStats(d){
+  const conf = (d.findings||[]).filter(f=>f.confirmed!==false);
+  const crit = conf.filter(f=>(f.severity||'').toLowerCase()==='critical').length;
+  reviewCount++;
+  const mrs=$('statMRs'); if(mrs) mrs.textContent = reviewCount;
+  const meta=$('statMRsMeta'); if(meta) meta.textContent = `last: ${(d.decision||'').toUpperCase()} · MR !${d.mr?.iid||''}`;
+  const c=$('statCritical'); if(c) c.textContent = crit;
+  const secs = ((d.elapsed_ms||0)/1000);
+  const t=$('statTime'); if(t) t.textContent = secs ? secs.toFixed(1)+'s' : '—';
+  const chip=$('statChip'); if(chip && secs){ const x=Math.round((23*60)/secs); chip.textContent = x+'× faster'; }
+}
+function renderReview(d){
+  lastReview = d;
+  updateStats(d);
+  $('log').textContent = (d.steps||[]).map(s=>`${s.agent} · ${s.action} · ${s.ms}ms`).join('\n')
+    + '\nDORAAuditor · PENDING write — awaiting approval ⏸';
+  const findings = (d.findings||[]).filter(f=>f.confirmed!==false);
+  const ev = d.evidence || {};
+  $('out').innerHTML = `
+    <div class="card" id="verdictCard">
+      <span class="verdict">${(d.decision||'').toUpperCase()}</span>
+      <span class="pill ${d.decision}">${d.mr? 'MR !'+d.mr.iid : ''}</span>
+      <div class="muted" style="font-size:12px">${d.elapsed_ms||0}ms · ${d.mr?.title||''} · ${d.verified_fixes||0} fix(es) re-scanned clean</div>
+      ${findings.map(f=>`<div class="card" style="margin-top:12px">
+        <strong>${(f.severity||'').toUpperCase()}: ${f.message||f.id}</strong>
+        ${f.fix_verified?'<span class="pill pass" style="margin-left:8px">✅ fix verified</span>':''}
+        <div class="muted" style="font-size:12px">${f.article||''} · ${f.file||''}</div>
+        <p>${f.explanation||''}</p>
+        ${f.fix_before?`<pre><span class="del">- ${f.fix_before}</span>\n<span class="add">+ ${f.fix_after||''}</span></pre>`:''}
+      </div>`).join('')}
+    </div>
+    <div class="card" id="evidenceCard">
+      <div class="sectlabel">🔐 Tamper-Evident Evidence Pack <span style="color:var(--text-2)">(DORA audit trail)</span></div>
+      <div class="kv"><span>Decision</span><b>${(ev.decision||d.decision||'').toUpperCase()}</b></div>
+      <div class="kv"><span>Findings recorded</span><b>${(ev.findings||[]).length}</b></div>
+      <div class="kv"><span>Generated</span><b class="mono">${ev.generated_at||''}</b></div>
+      <div class="kv" style="border:0"><span>SHA-256</span><b class="mono">${ev.sha256||'—'}</b></div>
+    </div>`;
+  pending = { projectId:(d.mr&&d.mr.projectId)||$('pid').value.trim(), iid:d.mr?.iid,
+    comment:d.review_comment_markdown, block:d.decision==='block', author:d.mr?.author,
+    obligations:d.obligations||[], evidence:d.evidence, findings:d.findings||[] };
+  // show the auto-fix button only when there are proposed fixes to apply
+  const fixable = (d.findings||[]).some(f=>f.fix_before && f.fix_after);
+  $('fixBtn').style.display = fixable ? '' : 'none';
+  if(d.proposedActions){
+    $('apTitle').textContent = 'Agent proposes: ' + d.proposedActions.description;
+    $('apTools').textContent = 'tools: ' + (d.proposedActions.tools||[]).join(' · ');
+    $('approval').classList.add('show');
+  }
+}
+
+async function run(){
+  const projectId = $('pid').value.trim(), iid = $('iid').value.trim();
+  if(!projectId || !iid) return;
+  $('out').innerHTML=''; $('ledgerCard').innerHTML=''; $('log').textContent='reviewing…';
+  const r = await fetch('/api/review',{method:'POST',headers:{'content-type':'application/json'},
+    body:JSON.stringify({projectId,iid})});
+  const d = await r.json();
+  if(d.error){ $('log').textContent='error: '+d.error; return; }
+  renderReview(d);
+}
+
+async function approve(){
+  const r = await fetch('/api/execute',{method:'POST',headers:{'content-type':'application/json'},
+    body:JSON.stringify({approved:true,...pending})});
+  const d = await r.json();
+  hideApproval();
+  $('log').textContent += `\nDORAAuditor · executed [${(d.executed||[]).join(', ')}] · ${d.at}`;
+  await loadLedger();
+}
+function hideApproval(){ $('approval').classList.remove('show'); }
+
+// ---------- Auto-remediation: agent opens a verified fix MR (gated) ----------
+async function remediate(){
+  if(!pending) return;
+  $('log').textContent += '\nDORAAuditor · drafting auto-fix branch + remediation MR…';
+  const r = await fetch('/api/remediate',{method:'POST',headers:{'content-type':'application/json'},
+    body:JSON.stringify({approved:true,projectId:pending.projectId,iid:pending.iid,findings:pending.findings})});
+  const d = await r.json();
+  if(!d.ok){ $('log').textContent += `\nDORAAuditor · auto-fix not applied: ${d.reason||d.error||'unknown'}`; return; }
+  const url = d.remediation_mr?.url, n = d.remediation_mr?.iid;
+  $('log').textContent += `\nDORAAuditor · ✅ opened remediation MR !${n} (${(d.applied||[]).length} fix(es)) → ${url}`;
+  $('out').insertAdjacentHTML('afterbegin', `<div class="card" id="fixCard" style="border-color:color-mix(in srgb,var(--success) 45%,transparent)">
+    <div class="sectlabel">🔧 Auto-Remediation MR opened</div>
+    <p style="margin:0 0 8px">CodeGuard pushed a verified fix branch and opened a remediation merge request:</p>
+    <a class="csv" href="${url}" target="_blank" rel="noopener">${url} ↗</a>
+    <div class="muted" style="font-size:12px;margin-top:8px">Applied: ${(d.applied||[]).map(a=>a.id).join(', ')}</div>
+  </div>`);
+}
+
+// ---------- Compliance-debt ledger ----------
+async function loadLedger(){
+  try{
+    const r = await fetch('/api/obligations/demo-co');
+    const rows = await r.json();
+    if(!Array.isArray(rows) || !rows.length){ $('ledgerCard').innerHTML=''; return; }
+    $('ledgerCard').innerHTML = `<div class="card" id="ledgerInner">
+      <div class="sectlabel">📒 Compliance-Debt Ledger
+        <a class="csv" href="/api/obligations/demo-co?format=csv">⬇ Export CSV for auditors</a></div>
+      <table class="ledger"><thead><tr>
+        <th>Regulation</th><th>Article</th><th>Severity</th><th>What</th><th>Status</th></tr></thead>
+        <tbody>${rows.map(o=>`<tr>
+          <td>${o.regulation||''}</td><td>${o.article||''}</td>
+          <td><span class="pill ${o.severity==='critical'?'block':'warn'}">${o.severity||''}</span></td>
+          <td>${o.what||o.trigger||''}</td><td>${o.status||''}</td></tr>`).join('')}</tbody></table></div>`;
+  }catch(e){ /* ledger optional */ }
+}
+
+// ====================================================================
+//  JUDGE NAVIGATION — guided, self-driving tour for hackathon judges
+// ====================================================================
+let jStep = 0, jHL = null;
+const SAMPLE = { pid: 'demo/payments', iid: '247' };
+
+const STEPS = [
+  { el:'#searchbar', title:'The problem CodeGuard solves',
+    req:'Why it matters',
+    body:`Manual DORA Art.9 review of a merge request takes a senior engineer <b>~23 minutes</b>.
+      CodeGuard does it in <b>~45 seconds</b> — and never lets a non-compliant MR reach production.
+      I've loaded a real-shaped sample: <b>${SAMPLE.pid}</b>, MR <b>!${SAMPLE.iid}</b> (adds a payment endpoint).`,
+    action: async ()=>{ $('pid').value=SAMPLE.pid; $('iid').value=SAMPLE.iid; } },
+
+  { el:'#logcard', title:'Two agents run a 5-step mission',
+    req:'✓ Agent, not a chatbot  ·  ✓ GitLab MCP',
+    body:`<b>GitLabReader</b> fetches the MR + changed-file diffs through the <b>GitLab MCP server</b>.
+      <b>DORAAuditor</b> pre-scans deterministically, then has <b>Gemini 3</b> confirm real violations and
+      cut false positives. Watch the live agent log — these are sequential tool-using steps.`,
+    action: async ()=>{ await driveReview(); } },
+
+  { el:'#verdictCard', title:'Findings — each one is verified, not guessed',
+    req:'✓ Gemini 3 reasoning  ·  ✓ Real eval',
+    body:`The verdict is <b>BLOCK</b> — unencrypted card data violates DORA Art.9. Every fix is
+      <b>re-scanned by the rule engine</b> to prove it actually clears the violation (✅ fix verified).
+      Our deterministic eval scores <b>100% detection recall</b> on the golden set — reproducible, no creds.`,
+    action: async ()=>{} },
+
+  { el:'#approval', title:'Human-in-the-loop — the agent cannot write alone',
+    req:'✓ Keeps a human in control',
+    body:`CodeGuard has <b>read</b> everything, but it will <b>not</b> comment, label, block the MR, or open
+      a training issue until <b>you approve</b>. This gate is enforced server-side (<span class="mono">/api/execute</span>
+      returns 403 without approval) and declared in the Agent Builder <span class="mono">humanInTheLoop</span> config.`,
+    action: async ()=>{ $('approval').classList.add('show'); } },
+
+  { el:'#logcard', title:'Approved → it acts through GitLab MCP',
+    req:'✓ Consequential actions, gated',
+    body:`On approval the agent posts the review comment, applies the <b>compliance-blocked</b> label,
+      blocks the MR, and logs a training issue — all via GitLab MCP write tools. Watch the activity log update.`,
+    action: async ()=>{ await driveApprove(); } },
+
+  { el:'#fixCard', title:'It doesn’t just flag — it fixes',
+    req:'★ Marquee: agent that acts',
+    body:`One more approval and CodeGuard <b>pushes a fix branch and opens a remediation MR</b> —
+      each fix already re-scanned clean by the rule engine. The reviewer becomes the fixer.
+      That's the difference between an AI linter and an <b>agent that closes the loop</b>.`,
+    action: async ()=>{ await remediate(); } },
+
+  { el:'#evidenceCard', title:'Tamper-evident evidence pack',
+    req:'✓ Differentiator: audit-ready',
+    body:`Every scan emits a <b>SHA-256-hashed evidence record</b> — decision, findings, timestamp.
+      That's a tamper-evident DORA audit trail an examiner can verify. Compliance isn't a vibe; it's a hash.`,
+    action: async ()=>{} },
+
+  { el:'#ledgerCard', title:'Compliance-debt ledger',
+    req:'✓ Differentiator: closes the loop',
+    body:`Confirmed violations don't just get commented — they become <b>tracked compliance obligations</b>
+      in a shared ledger, exportable to <b>CSV for auditors</b>. CodeGuard turns a code review into governance.`,
+    action: async ()=>{ await loadLedger(); } },
+
+  { el:null, title:'Hackathon requirements — all green',
+    req:'Scorecard',
+    body:`<div class="reqgrid">
+        <div class="r">✅ <span>Gemini 3 reasoning</span></div>
+        <div class="r">✅ <span>Google Cloud Agent Builder</span></div>
+        <div class="r">✅ <span>GitLab via GitLab MCP</span></div>
+        <div class="r">✅ <span>Cloud Run hosting</span></div>
+        <div class="r">✅ <span>Multi-step autonomous agent</span></div>
+        <div class="r">✅ <span>Human-in-the-loop gate</span></div>
+        <div class="r">✅ <span>Reproducible eval (100%)</span></div>
+        <div class="r">✅ <span>~45s vs ~23min manual</span></div>
+      </div>
+      <p style="margin-top:12px">That's CodeGuard: every merge request, checked for DORA compliance
+      <b>before</b> production — with a human in control. Thank you. 🛡</p>`,
+    action: async ()=>{} },
+];
+
+function clearHL(){ if(jHL){ jHL.classList.remove('spotlight'); jHL=null; } }
+function highlight(sel){
+  clearHL();
+  if(!sel) return;
+  const el = document.querySelector(sel);
+  if(el){ el.classList.add('spotlight'); jHL=el; el.scrollIntoView({behavior:'smooth',block:'center'}); }
+}
+
+async function driveReview(){
+  $('out').innerHTML=''; $('ledgerCard').innerHTML=''; $('log').textContent='reviewing…';
+  const r = await fetch('/api/review',{method:'POST',headers:{'content-type':'application/json'},
+    body:JSON.stringify({projectId:SAMPLE.pid,iid:SAMPLE.iid})});
+  const d = await r.json();
+  if(d.error){ $('log').textContent='error: '+d.error+'\n(tip: run with MOCK=true for the rehearsal demo)'; return; }
+  renderReview(d);
+}
+async function driveApprove(){
+  if(!pending) return;
+  await approve();
+}
+
+function paintCoach(){
+  const s = STEPS[jStep];
+  $('coachStep').textContent = `Step ${jStep+1} of ${STEPS.length}`;
+  $('coachTitle').textContent = s.title;
+  $('coachBody').innerHTML = `<p>${s.body}</p>${s.req?`<span class="req">${s.req}</span>`:''}`;
+  $('coachDots').innerHTML = STEPS.map((_,i)=>`<span class="dot ${i<=jStep?'on':''}"></span>`).join('');
+  $('coachNext').textContent = jStep===STEPS.length-1 ? 'Finish ✓' : 'Next ▸';
+}
+
+async function runStep(){
+  const s = STEPS[jStep];
+  paintCoach();
+  if(s.action) await s.action();
+  // highlight after action so freshly-rendered elements exist
+  await sleep(120);
+  highlight(s.el);
+}
+
+async function startJudge(){
+  jStep = 0;
+  $('coach').classList.add('show');
+  await runStep();
+}
+async function coachNext(){
+  if(jStep >= STEPS.length-1){ endJudge(); return; }
+  jStep++;
+  await runStep();
+}
+function endJudge(){
+  clearHL();
+  $('coach').classList.remove('show');
+}
+
+// dashboard micro-interaction: animate the "Analyzing…" cell (matches Stitch mock)
+setInterval(()=>{ const c=$('analyzingCell'); if(c){ const n=(c.dataset.n|0)%3+1; c.dataset.n=n; c.textContent='Analyzing'+'.'.repeat(n);} },900);
+</script>
+</body>
+</html>

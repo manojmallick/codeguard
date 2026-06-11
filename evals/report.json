@@ -1,0 +1,69 @@
+{
+  "ran_at": "2026-06-11T00:35:07.558Z",
+  "target": 0.85,
+  "detection_recall": 1,
+  "fix_verification_rate": 1,
+  "rows": [
+    {
+      "name": "Unencrypted card save",
+      "expect_rule": "encryption_sensitive_data",
+      "found": [
+        "encryption_sensitive_data"
+      ],
+      "detected": true,
+      "fixVerified": true
+    },
+    {
+      "name": "Hardcoded password",
+      "expect_rule": "encryption_sensitive_data",
+      "found": [
+        "encryption_sensitive_data"
+      ],
+      "detected": true,
+      "fixVerified": true
+    },
+    {
+      "name": "Empty catch block (no logging)",
+      "expect_rule": "logging_completeness",
+      "found": [
+        "logging_completeness"
+      ],
+      "detected": true,
+      "fixVerified": true
+    },
+    {
+      "name": "printStackTrace instead of logger",
+      "expect_rule": "logging_completeness",
+      "found": [
+        "logging_completeness"
+      ],
+      "detected": true,
+      "fixVerified": true
+    },
+    {
+      "name": "TODO auth marker",
+      "expect_rule": "authorization_checks",
+      "found": [
+        "authorization_checks"
+      ],
+      "detected": true,
+      "fixVerified": true
+    },
+    {
+      "name": "Stack trace leaked to response",
+      "expect_rule": "safe_error_handling",
+      "found": [
+        "safe_error_handling"
+      ],
+      "detected": true,
+      "fixVerified": true
+    },
+    {
+      "name": "Clean code — no finding expected",
+      "expect_rule": null,
+      "found": [],
+      "detected": true,
+      "fixVerified": null
+    }
+  ]
+}
