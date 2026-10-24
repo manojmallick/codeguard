@@ -109,6 +109,14 @@ MOCK=true npm run dev
 > listed but returns *"no longer available"* on the Developer API. **`[TESTED: YES]`** — verified
 > live against a real GitLab MR (3 confirmed DORA/GDPR/NIS2 findings, ~8s end-to-end).
 
+### Scripts
+
+| Command | What it does |
+|---|---|
+| `npm run dev` | Server with `--watch` |
+| `npm start` | Server (`NODE_ENV` and `PORT` come from the environment) |
+| `npm run eval` | Run the evaluation set |
+
 ## ☁️ Deploy to Cloud Run
 
 **A) Live judge demo, no secrets (MOCK):**
